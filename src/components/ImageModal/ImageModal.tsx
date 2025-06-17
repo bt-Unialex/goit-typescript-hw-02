@@ -17,7 +17,7 @@ export default function ImageModal({ image, modalIsOpen, onClose }: ImageModalPr
       <Modal
         isOpen={modalIsOpen}
         //   onAfterOpen={afterOpenModal}
-        // onRequestClose={onClose}
+        onRequestClose={onClose}
         contentLabel="Full image Modal"
         className={css.Modal}
         overlayClassName={css.Overlay}>
