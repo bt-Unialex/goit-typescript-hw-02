@@ -1,5 +1,5 @@
 import './App.css';
-import { useRef, useState } from 'react';
+import { JSX, useRef, useState } from 'react';
 import { searchImage } from '../../searchImage.js';
 
 import SearchBar from '../SearchBar/SearchBar';
@@ -10,7 +10,7 @@ import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import ImageModal from '../ImageModal/ImageModal';
 import { GalleryState, Image } from '../../types';
 
-function App() {
+function App(): JSX.Element {
   const [gallery, setGallery] = useState<GalleryState | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -32,7 +32,7 @@ function App() {
       setIsLoading(true);
 
       const newGallery = await searchImage(quary, page);
-      console.log(newGallery.pagesLoaded, '===', newGallery.pagesAvailable);
+      // console.log("Page:",newGallery.pagesLoaded, ' =of= ', newGallery.pagesAvailable);
 
       if (newGallery.images.length === 0) throw new Error('No image for your request');
 
