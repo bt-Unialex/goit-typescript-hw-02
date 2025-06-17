@@ -1,17 +1,26 @@
+import { FormEvent, JSX } from 'react';
 import css from './SearchBar.module.css';
 import toast, { Toaster } from 'react-hot-toast';
 
-export default function SearchBar({ onSubmit }) {
-  async function handleSubmit(evt) {
+interface SearchBarProps {
+  onSubmit: (searchQuary: string) => void;
+}
+
+export default function SearchBar({ onSubmit }: SearchBarProps): JSX.Element {
+  async function handleSubmit(evt: FormEvent<HTMLFormElement>) {
     evt.preventDefault();
-    const quary = evt.target.elements.search.value;
+    const form: HTMLFormElement = evt.currentTarget;
+    const formData = new FormData(form);
+    const quary = formData.get('search') as string;
+
     if (quary.trim() === '') {
       toast.error('Please enter search term!');
       return;
     }
     onSubmit(quary);
-    evt.target.reset();
+    form.reset();
   }
+
   return (
     <header>
       <form onSubmit={handleSubmit} className={css.wrapper}>

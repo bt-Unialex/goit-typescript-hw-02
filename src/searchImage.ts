@@ -1,16 +1,17 @@
 import axios from 'axios';
+import { GalleryState } from './types';
 
-export function searchImage(request, page = 1, per_page = 20) {
+export function searchImage(request: string, page = 1, per_page = 20): Promise<GalleryState> {
   const API_KEY = import.meta.env.VITE_UNSPLASH_API_KEY;
 
   const BASE_URL = 'https://api.unsplash.com/search/photos';
-  const param = new URLSearchParams({
+  const param: URLSearchParams = new URLSearchParams({
     client_id: API_KEY,
     query: encodeURIComponent(request),
     // orientation: 'landscape',
     // content_filter: "high",
-    page: page,
-    per_page: per_page,
+    page: String(page),
+    per_page: String(per_page),
   });
 
   const URL = `${BASE_URL}?${param}`;

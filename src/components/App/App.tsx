@@ -8,20 +8,22 @@ import ImageGallery from '../ImageGallery/ImageGallery';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import LoadMoreBtn from '../LoadMoreBtn/LoadMoreBtn';
 import ImageModal from '../ImageModal/ImageModal';
+import { GalleryState, Image } from '../../types';
 
 function App() {
-  const [gallery, setGallery] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
-  const [imgForModal, setImgForModal] = useState(null);
-  const [requestError, setRequestError] = useState('');
-  const galleryRef = useRef(null);
+  const [gallery, setGallery] = useState<GalleryState | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [imgForModal, setImgForModal] = useState<Image | null>(null);
+  const [requestError, setRequestError] = useState<string>('');
+  const galleryRef = useRef<HTMLUListElement>(null);
+  const [isLoadMoreBtnVisible, setIsLoadMoreBtnVisible] = useState<boolean>(false);
 
   function toggleModal() {
     setModalIsOpen(!modalIsOpen);
   }
 
-  async function loadImg(quary, page = 1) {
+  async function loadImg(quary: string, page: number = 1) {
     try {
       if (page === 1) {
         setGallery(null);
@@ -30,7 +32,13 @@ function App() {
       setIsLoading(true);
 
       const newGallery = await searchImage(quary, page);
+      console.log(newGallery.pagesLoaded, '===', newGallery.pagesAvailable);
+
       if (newGallery.images.length === 0) throw new Error('No image for your request');
+
+      if (newGallery.pagesLoaded < newGallery.pagesAvailable) {
+        setIsLoadMoreBtnVisible(true);
+      } else setIsLoadMoreBtnVisible(false);
 
       setGallery((prevGallery) => ({
         ...newGallery,
@@ -38,20 +46,23 @@ function App() {
       }));
 
       setTimeout(() => {
-        window.scrollTo({
-          top: galleryRef.current.scrollHeight,
-          behavior: 'smooth',
-        });
+        if (galleryRef.current !== null) {
+          window.scrollTo({
+            top: galleryRef.current.scrollHeight,
+            behavior: 'smooth',
+          });
+        }
       }, 300);
     } catch (error) {
       console.error(error);
-      setRequestError(error.message);
+      const message = error instanceof Error ? error.message : 'An unknown error occurred';
+      setRequestError(message);
     } finally {
       setIsLoading(false);
     }
   }
 
-  function showImg(img) {
+  function showImg(img: Image) {
     setImgForModal(img);
     setModalIsOpen(true);
   }
@@ -66,7 +77,7 @@ function App() {
           <ErrorMessage message={requestError} />
         )}
         {isLoading && <Loader />}
-        {!requestError && gallery?.pagesLoaded < gallery?.pagesAvailable && (
+        {!requestError && isLoadMoreBtnVisible && gallery && (
           <LoadMoreBtn gallery={gallery} onClick={loadImg} />
         )}
         {imgForModal && (

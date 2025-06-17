@@ -1,15 +1,23 @@
-import ImageCard from '../ImageCard/ImageCard';
 import css from './ImageModal.module.css';
 import Modal from 'react-modal';
+import { JSX, MouseEventHandler } from 'react';
+import ImageCard from '../ImageCard/ImageCard';
+import { Image } from '../../types';
 
-export default function ImageModal({ image, modalIsOpen, onClose }) {
+interface ImageModalProps {
+  image: Image;
+  modalIsOpen: boolean;
+  onClose: MouseEventHandler<HTMLButtonElement>;
+}
+
+export default function ImageModal({ image, modalIsOpen, onClose }: ImageModalProps): JSX.Element {
   Modal.setAppElement('#modal');
   return (
     <>
       <Modal
         isOpen={modalIsOpen}
         //   onAfterOpen={afterOpenModal}
-        onRequestClose={onClose}
+        // onRequestClose={onClose}
         contentLabel="Full image Modal"
         className={css.Modal}
         overlayClassName={css.Overlay}>
@@ -17,7 +25,10 @@ export default function ImageModal({ image, modalIsOpen, onClose }) {
         <button className={css.closeBtn} onClick={onClose} aria-label="Close modal">
           x
         </button>
-        <ImageCard image={image} bigImg={image.urls.regular} />
+        <ImageCard
+          image={image.urls.regular}
+          alt={image.alt_description || image.description || ''}
+        />
       </Modal>
     </>
   );
